@@ -1,6 +1,8 @@
 import pandas as pd
 from funciones import buscar_csv
 
+''' Fusiona todos los archivos csv de una carpeta en base a una clave principal común'''
+
 # PARÁMETROS
 ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/modificado/'
 clave_principal = 'PATNO'

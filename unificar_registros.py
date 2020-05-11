@@ -1,6 +1,8 @@
 import pandas as pd
 from funciones import buscar_csv
 
+''' Descarta los registros diferentes del mismo paciente, cogiendo el más completo o reciente '''
+
 # PARÁMETROS
 ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/modificado/'
 clave_principal = 'PATNO'

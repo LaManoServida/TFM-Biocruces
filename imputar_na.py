@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from funciones import guardar_tabla
 
 ''' Reemplaza los valores perdidos por la media de la fila o columna '''
 
@@ -20,6 +21,4 @@ else:
 # reconstruir la tabla entera
 tabla_entera.iloc[:, subset_col] = nueva
 
-# guardar
-ruta_split = os.path.splitext(ruta)
-tabla_entera.to_csv(ruta_split[0] + '_sin_na' + ruta_split[1], index=False)
+guardar_tabla(tabla_entera, ruta, '_sin_na')

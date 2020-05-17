@@ -2,6 +2,7 @@ import os
 import time
 import ciso8601
 import pandas as pd
+from funciones import guardar_tabla
 
 ''' Convierte la fecha en ISO 8601 de una columna a UNIX timestamp '''
 
@@ -17,6 +18,4 @@ tabla[variable_fecha] = tabla[variable_fecha].map(
     lambda f: int(time.mktime(ciso8601.parse_datetime(f).timetuple()))
 )
 
-# guardar
-ruta_split = os.path.splitext(ruta)
-tabla.to_csv(ruta_split[0] + '_fecha_timestamp' + ruta_split[1], index=False)
+guardar_tabla(tabla, ruta, '_fecha_timestamp')

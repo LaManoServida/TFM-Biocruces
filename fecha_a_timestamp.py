@@ -1,4 +1,3 @@
-import os
 import time
 import ciso8601
 import pandas as pd
@@ -11,7 +10,7 @@ ruta = 'D:/Dropbox/UNI/TFM/datos/UPDRS 3.csv'
 variable_fecha = 'FECHA'
 
 # leer tabla
-tabla = pd.read_csv(ruta, sep=',')
+tabla = pd.read_csv(ruta, sep=',', float_precision='round_trip')
 
 # convertir a UNIX
 tabla[variable_fecha] = tabla[variable_fecha].map(

@@ -11,7 +11,7 @@ clave_principal = 'PATNO'
 archivo_salida = 'fusionado.csv'
 
 # cargar tablas
-tablas = [pd.read_csv(ruta_arch, sep=',') for ruta_arch in buscar_csv(ruta_carpeta)]
+tablas = [pd.read_csv(ruta_arch, sep=',', float_precision='round_trip') for ruta_arch in buscar_csv(ruta_carpeta)]
 
 datos = reduce(lambda t1, t2: pd.merge(t1, t2, on=clave_principal, how='outer'), tablas)  # ????
 

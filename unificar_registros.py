@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from funciones import buscar_csv, guardar_tabla
 
@@ -11,7 +10,7 @@ clave_fecha = 'FECHA'  # debe ser un número, como UNIX timestamp
 
 # leer cada tabla y quitar los duplicados
 for ruta_arch in buscar_csv(ruta_carpeta):
-    tabla = pd.read_csv(ruta_arch, sep=',')
+    tabla = pd.read_csv(ruta_arch, sep=',', float_precision='round_trip')
 
     # quitar filas totalmente duplicadas
     tabla.drop_duplicates(inplace=True)

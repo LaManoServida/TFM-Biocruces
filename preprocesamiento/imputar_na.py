@@ -1,5 +1,5 @@
 import pandas as pd
-from funciones import guardar_tabla
+from preprocesamiento.funciones import guardar_tabla
 
 ''' Reemplaza los valores perdidos por la media de la fila o columna '''
 

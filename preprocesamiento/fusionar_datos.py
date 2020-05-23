@@ -1,9 +1,9 @@
 import os
 from functools import reduce
 import pandas as pd
-from funciones import buscar_csv, guardar_tabla
+from preprocesamiento.funciones import buscar_csv, guardar_tabla
 
-''' Fusiona todos los archivos csv de una carpeta en base a una clave principal común'''
+''' Fusiona todos los archivos csv de una carpeta en base a una clave principal común '''
 
 # PARÁMETROS
 ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/'

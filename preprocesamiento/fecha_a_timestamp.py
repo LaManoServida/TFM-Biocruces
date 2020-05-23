@@ -1,7 +1,7 @@
 import time
 import ciso8601
 import pandas as pd
-from funciones import guardar_tabla
+from preprocesamiento.funciones import guardar_tabla
 
 ''' Convierte la fecha en ISO 8601 de una columna a UNIX timestamp '''
 

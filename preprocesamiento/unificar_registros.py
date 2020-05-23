@@ -1,5 +1,5 @@
 import pandas as pd
-from funciones import buscar_csv, guardar_tabla
+from preprocesamiento.funciones import buscar_csv, guardar_tabla
 
 ''' Descarta los registros diferentes del mismo paciente, cogiendo el más completo o reciente '''
 

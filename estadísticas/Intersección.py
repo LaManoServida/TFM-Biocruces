@@ -50,9 +50,12 @@ plt.setp(ax.get_xticklabels(), rotation=35, ha='left', rotation_mode='anchor')
 # mostrar texto en cada celda
 for i in range(num_tablas):
     for j in range(num_tablas):
-        text = ax.text(j, i, str(matriz[i, j]) + '%', ha='center', va='center', color='gray')
+        ax.text(j, i, str(matriz[i, j]) + '%' if i != j else '-',
+                ha='center', va='center', color='gray')
+
+# título
+ax.set_title('Porcentaje de pacientes de A contenidos en B', y=-0.1)
 
 # guardar
-ax.set_title('Porcentaje de pacientes de A contenidos en B', y=-0.1)  # título
 fig.tight_layout()
 plt.savefig(ruta_grafico)

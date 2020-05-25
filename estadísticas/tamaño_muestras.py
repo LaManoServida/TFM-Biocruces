@@ -16,9 +16,11 @@ tablas = [pd.read_csv(ruta_arch, sep=',', float_precision='round_trip') for ruta
 
 # obtener solo el número de pacientes únicos de cada archivo
 nums_pacientes = [len(np.unique(tabla[clave_principal].values)) for tabla in tablas]
+print(nums_pacientes)
 
 # generar diagrama de barras
 etiquetas = [os.path.splitext(r)[0] for r in os.listdir(ruta_carpeta)]
+print(etiquetas)
 plt.figure(figsize=(6, 7))
 plt.bar(etiquetas, nums_pacientes, color='forestgreen')
 

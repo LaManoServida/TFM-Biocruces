@@ -6,9 +6,10 @@ from preprocesamiento.funciones import buscar_csv, guardar_tabla
 ''' Fusiona todos los archivos csv de una carpeta en base a una clave principal común '''
 
 # PARÁMETROS
-ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/'
+ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/5 - Quitar duplicados'
 clave_principal = 'PATNO'
-tabla_principal = 'Principal_sin_duplicados.csv'
+clave_fecha = 'FECHA'
+tabla_principal = 'PPMI_Baseline_Data_02Jul2018_sin_duplicados.csv'
 archivo_salida = 'fusionado.csv'
 
 
@@ -19,7 +20,7 @@ def combinar_tablas(t1, t2):
 
     # a parte de la clave principal, solo puede haber una más en común
     if clave_principal not in cols_comun or len(cols_comun) > 2:
-        print('No ha sido posible combinar la tabla {} con {}'.format(t1.columns.values, t2.columns.values))
+        print(f'No ha sido posible combinar la tabla {t1.columns.values} con {t2.columns.values}')
         return t1
 
     # combinar tablas según la clave principal
@@ -42,12 +43,15 @@ def combinar_tablas(t1, t2):
 
 # leer archivos
 rutas_arch = buscar_csv(ruta_carpeta)
-
+print(rutas_arch)
 # poner la tabla principal al comienzo de la lista
 rutas_arch.insert(0, rutas_arch.pop(rutas_arch.index(os.path.join(ruta_carpeta, tabla_principal))))
 
 # cargar tablas
 tablas = [pd.read_csv(ruta_arch, sep=',', float_precision='round_trip') for ruta_arch in rutas_arch]
+
+# si tienen fecha, quitarla
+[tabla.drop(clave_fecha, 1, inplace=True) for tabla in tablas if clave_fecha in tabla.columns]
 
 # combinarlas todas aglomerativamente
 datos = reduce(lambda t1, t2: combinar_tablas(t1, t2), tablas)

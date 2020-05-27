@@ -1,0 +1,159 @@
+--- Benton_Judgment_of_Line_Orientation ---
+Dimensiones: (6531, 1)
+Valores perdidos: 11, un 0.2%
+Filas con valores perdidos: 11, un 0.2%
+Incidencia por variable:
+Benton           100.0%
+
+
+
+--- Epworth_Sleepiness_Scale ---
+Dimensiones: (7760, 9)
+Valores perdidos: 10, un 0.0%
+Filas con valores perdidos: 9, un 0.1%
+Incidencia por variable:
+FECHA            0.0%
+ESS_1            0.0%
+ESS_2            10.0%
+ESS_3            0.0%
+ESS_4            0.0%
+ESS_5            30.0%
+ESS_6            0.0%
+ESS_7            0.0%
+ESS_8            60.0%
+
+
+
+--- Hopkins_Verbal_Learning_Test ---
+Dimensiones: (6557, 4)
+Valores perdidos: 7, un 0.0%
+Filas con valores perdidos: 4, un 0.1%
+Incidencia por variable:
+FECHA            0.0%
+HVLT_1           14.3%
+HVLT_2           28.6%
+HVLT_3           57.1%
+
+
+
+--- MDS_UPDRS_Part_III ---
+Dimensiones: (15084, 34)
+Valores perdidos: 213, un 0.0%
+Filas con valores perdidos: 78, un 0.5%
+Incidencia por variable:
+FECHA            0.0%
+UPDRS III_1      0.5%
+UPDRS III_2      0.9%
+UPDRS III_3      0.9%
+UPDRS III_4      0.9%
+UPDRS III_5      0.9%
+UPDRS III_6      1.9%
+UPDRS III_7      2.3%
+UPDRS III_8      1.4%
+UPDRS III_9      2.3%
+UPDRS III_10     1.4%
+UPDRS III_11     2.8%
+UPDRS III_12     1.4%
+UPDRS III_13     2.3%
+UPDRS III_14     16.4%
+UPDRS III_15     14.6%
+UPDRS III_16     0.9%
+UPDRS III_17     1.4%
+UPDRS III_18     2.3%
+UPDRS III_19     1.4%
+UPDRS III_20     8.5%
+UPDRS III_21     13.1%
+UPDRS III_22     1.9%
+UPDRS III_23     1.9%
+UPDRS III_24     1.9%
+UPDRS III_25     2.3%
+UPDRS III_26     1.9%
+UPDRS III_27     1.4%
+UPDRS III_28     1.4%
+UPDRS III_29     1.4%
+UPDRS III_30     1.4%
+UPDRS III_31     1.4%
+UPDRS III_32     1.9%
+UPDRS III_33     2.3%
+
+
+
+--- Patient_Status ---
+Dimensiones: (2234, 3)
+Valores perdidos: 812, un 12.1%
+Filas con valores perdidos: 812, un 36.3%
+Incidencia por variable:
+RECRUITMENT_CAT  0.0%
+ENROLL_STATUS    0.0%
+DESCRP_CAT       100.0%
+
+
+
+--- PPMI_Baseline_Data_02Jul2018 ---
+Dimensiones: (683, 14)
+Valores perdidos: 607, un 6.3%
+Filas con valores perdidos: 209, un 30.6%
+Incidencia por variable:
+age              0.0%
+edu              0.0%
+disdur           32.3%
+age_disons       32.3%
+age_dis_onset    32.3%
+UPDRS III        0.2%
+UPSIT            0.0%
+Benton           0.2%
+ESS              0.2%
+GDS              0.0%
+HVLT             0.2%
+SCOPA-AUT        1.6%
+SDMT             0.2%
+MOCA             0.7%
+
+
+
+--- Socio-Economics ---
+Dimensiones: (2183, 2)
+Valores perdidos: 1, un 0.0%
+Filas con valores perdidos: 1, un 0.0%
+Incidencia por variable:
+FECHA            0.0%
+edu              100.0%
+
+
+
+--- Symbol_Digit_Modalities ---
+Dimensiones: (6544, 2)
+Valores perdidos: 6, un 0.0%
+Filas con valores perdidos: 6, un 0.1%
+Incidencia por variable:
+FECHA            0.0%
+SDMT             100.0%
+
+
+
+--- Trail_Making_A_and_B ---
+Dimensiones: (267, 5)
+Valores perdidos: 27, un 2.0%
+Filas con valores perdidos: 20, un 7.5%
+Incidencia por variable:
+FECHA            0.0%
+TMTA             0.0%
+TMTA_tiempo      25.9%
+TMTB             0.0%
+TMTB_tiempo      74.1%
+
+
+
+--- University_of_Pennsylvania_Smell_ID_Test ---
+Dimensiones: (2456, 5)
+Valores perdidos: 101, un 0.8%
+Filas con valores perdidos: 29, un 1.2%
+Incidencia por variable:
+FECHA            1.0%
+UPSIT_1          19.8%
+UPSIT_2          23.8%
+UPSIT_3          27.7%
+UPSIT_4          27.7%
+
+
+

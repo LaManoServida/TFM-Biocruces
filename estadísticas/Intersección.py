@@ -2,9 +2,8 @@ import os
 from typing import List
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
 from preprocesamiento.funciones import buscar_csv
+from estadísticas.generar_mapa_de_calor import mapa_de_calor
 
 ''' Calcula los porcentajes de intersección de pacientes entre varios archivos '''
 
@@ -31,31 +30,13 @@ for i in range(num_tablas):
 print(matriz)
 
 # generar mapa de calor
-fig, ax = plt.subplots(figsize=(10, 10))
-im = ax.imshow(matriz, cmap='hot')
-
-# número de marcas en cada eje
-ax.set_xticks(np.arange(num_tablas))
-ax.set_yticks(np.arange(num_tablas))
-
-# etiquetas de cada eje
 etiquetas = [os.path.splitext(r)[0] for r in os.listdir(ruta_carpeta)]
-ax.xaxis.tick_top()
-ax.set_xticklabels(etiquetas)
-ax.set_yticklabels(etiquetas)
-
-# configurar las etiquetas
-plt.setp(ax.get_xticklabels(), rotation=35, ha='left', rotation_mode='anchor')
-
-# mostrar texto en cada celda
-for i in range(num_tablas):
-    for j in range(num_tablas):
-        ax.text(j, i, str(matriz[i, j]) + '%' if i != j else '-',
-                ha='center', va='center', color='gray')
-
-# título
-ax.set_title('Porcentaje de pacientes de A contenidos en B', y=-0.1)
-
-# guardar
-fig.tight_layout()
-plt.savefig(ruta_grafico)
+mapa_de_calor(matriz=matriz,
+              ruta=ruta_grafico,
+              titulo='Porcentaje de pacientes de A contenidos en B',
+              etiquetas_x=etiquetas,
+              etiquetas_y=etiquetas,
+              sufijo='%',
+              tamano_fig=(10, 10),
+              rango_color=(0, 100)
+              )

@@ -1,10 +1,10 @@
 import pandas as pd
 from preprocesamiento.funciones import buscar_csv, guardar_tabla
 
-''' Descarta los registros diferentes del mismo paciente, cogiendo el más completo o reciente '''
+''' Descarta los registros diferentes del mismo paciente, cogiendo el más completo o antiguo '''
 
 # PARÁMETROS
-ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/'
+ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/5 - Quitar duplicados/'
 clave_principal = 'PATNO'
 clave_fecha = 'FECHA'  # debe ser un número, como UNIX timestamp
 
@@ -28,11 +28,11 @@ for ruta_arch in buscar_csv(ruta_carpeta):
             num_perdidos = grupo.T.isna().sum().values  # array de número valores perdidos de cada registro
             grupo = grupo[num_perdidos == num_perdidos.min()]
 
-            # de ellos elegir el último (se supone que es el más reciente)
+            # de ellos elegir el primero (se supone que es el más antiguo)
             # pero si no está ya ordenado y tiene una fecha
             if clave_fecha in grupo:
                 grupo = grupo.sort_values(clave_fecha)  # se ordenan
 
-            tabla = pd.concat((tabla, grupo.iloc[[-1]]))  # añadir el último
+            tabla = pd.concat((tabla, grupo.iloc[[0]]))  # añadir el primero
 
     guardar_tabla(tabla, ruta_arch, '_sin_duplicados')

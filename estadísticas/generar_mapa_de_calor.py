@@ -5,7 +5,7 @@ import matplotlib.colors as colors
 ''' Genera y guarda el mapa de calor de una matriz '''
 
 
-def mapa_de_calor(matriz, ruta, titulo, etiquetas_x, etiquetas_y, sufijo='', nomismafilacol=True, tamano_fig='auto',
+def mapa_de_calor(matriz, ruta, titulo, etiquetas_x, etiquetas_y, sufijo='', no_diagonal=True, tamano_fig='auto',
                   paleta='hot', rango_color=(None, None)):
     # tamaño figura
     if tamano_fig == 'auto':
@@ -17,7 +17,7 @@ def mapa_de_calor(matriz, ruta, titulo, etiquetas_x, etiquetas_y, sufijo='', nom
 
     # si se ha especificado no pintar la diagonal
     tipo_datos_orig = matriz.dtype
-    if nomismafilacol:
+    if no_diagonal:
         matriz = matriz.astype('float')  # para que pueda haber nan
         diagonal = range(min(matriz.shape))
         matriz[diagonal, diagonal] = np.nan

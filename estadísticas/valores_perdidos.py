@@ -7,10 +7,10 @@ from estadísticas.generar_mapa_de_calor import mapa_de_calor
 ''' Calcula estadísticas referentes a los valores perdidos de cada archivo '''
 
 # PARÁMETROS
-ruta_carpeta_datos = 'D:/Dropbox/UNI/TFM/datos/3 - Cambiar nombres de variables'
-ruta_resultados = 'Valores perdidos - resultados'
+ruta_carpeta_datos = 'D:/Dropbox/UNI/TFM/datos/5 - Dividir entre tipos de pacientes (README)/Sanos con withdrew'
+ruta_resultados = os.path.join(ruta_carpeta_datos, 'Valores perdidos - resultados')
 nombre_informe = 'Informe valores perdidos.txt'
-nombre_mapa_de_calor = 'Mapa de calor.png'
+nombre_mapa_de_calor = 'Mapa de calor'
 clave_principal = 'PATNO'
 
 # crear carpeta para resultados
@@ -27,6 +27,9 @@ for ruta_archivo in buscar_csv(ruta_carpeta_datos):
     tabla = pd.read_csv(ruta_archivo, sep=',', float_precision='round_trip')
     del tabla[clave_principal]  # quitar clave principal porque no tiene valores perdidos
 
+    # numero de filas
+    num_filas = len(tabla)
+
     # número de valores perdidos por cada columna
     na_columnas = tabla.isna().sum()
 
@@ -40,10 +43,13 @@ for ruta_archivo in buscar_csv(ruta_carpeta_datos):
     filas_con_na = np.count_nonzero(tabla.T.isna().sum().values)
 
     # porcentaje de filas con valores perdidos
-    porcent_filas_con_na = round(filas_con_na / len(tabla) * 100, 1)
+    porcent_filas_con_na = round(filas_con_na / num_filas * 100, 1)
 
     # incidencia de los valores perdidos en cada variable
     prop_na_columnas = round(na_columnas / total_na * 100, 1)
+
+    # porcentaje de valores perdidos por cada variable
+    porcent_na_columnas = round(na_columnas / num_filas * 100, 1)
 
     # escribir en el informe
     f.write(
@@ -51,17 +57,18 @@ for ruta_archivo in buscar_csv(ruta_carpeta_datos):
         f'Dimensiones: {tabla.shape}\n'
         f'Valores perdidos: {total_na}, un {porcent_total_na}%\n'
         f'Filas con valores perdidos: {filas_con_na}, un {porcent_filas_con_na}%\n'
-        f'Incidencia por variable:\n'
+        f'Incidencia por variable y porcentaje respecto al total de la variable:\n'
     )
-    for variable, valor in zip(prop_na_columnas.keys().values, prop_na_columnas.values):
-        f.write(f'{variable:17s}{valor}%\n')
+    for variable, valor1, valor2 in \
+            zip(prop_na_columnas.keys().values, prop_na_columnas.values, porcent_na_columnas.values):
+        f.write(f'{variable:17s}{str(valor1) + "%":10s}{valor2}%\n')
 
     # separador entre tablas
     f.write('\n' * 3)
 
     # generar mapas de calor mostrando la correlación entre variables para valores perdidos
     mapa_de_calor(matriz=tabla.isna().corr().values.round(1),
-                  ruta=os.path.join(ruta_resultados, f'{nombre_archivo} - {nombre_mapa_de_calor}'),
+                  ruta=os.path.join(ruta_resultados, f'{nombre_mapa_de_calor} - {nombre_archivo}.png'),
                   titulo=f'Correlación entre variables para valores perdidos\n{nombre_archivo}',
                   etiquetas_x=tabla.columns.to_list(),
                   etiquetas_y=tabla.columns.to_list(),

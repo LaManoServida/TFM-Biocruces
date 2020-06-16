@@ -30,8 +30,7 @@ for ruta_arch in buscar_csv(ruta_carpeta):
                 num_perdidos = grupo.T.isna().sum().values  # array de número valores perdidos de cada registro
                 grupo = grupo[num_perdidos == num_perdidos.min()]
 
-            # de ellos elegir el primero (se supone que es el más antiguo)
-            # pero si no está ya ordenado y tiene una fecha
+            # de ellos elegir el más antiguo si tiene fecha
             if clave_fecha in grupo:
                 grupo = grupo.sort_values(clave_fecha)  # se ordenan
 

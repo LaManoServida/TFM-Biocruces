@@ -5,9 +5,9 @@ import pandas as pd
 ''' Calcula estadísticas referentes a los valores perdidos de un archivo '''
 
 # PARÁMETROS
-ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/7 - Juntar en un solo archivo/IDIOPATHIC PD/fusionado.csv'
+ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/7 - Juntar en un solo archivo/RBD.csv'
 nombre_informe = 'Informe valores perdidos.txt'
-excluir_variables = ['TMTA', 'TMTA_tiempo', 'TMTB', 'TMTB_tiempo']
+excluir_variables = []
 
 # crear archivo del informe
 f = open(os.path.join(os.path.dirname(ruta_archivo), nombre_informe), mode='w', encoding='UTF-8')

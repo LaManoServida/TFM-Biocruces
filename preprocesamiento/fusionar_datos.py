@@ -6,9 +6,9 @@ from preprocesamiento.funciones import buscar_csv, guardar_tabla
 ''' Fusiona todos los archivos csv de una carpeta en base a una clave principal común '''
 
 # PARÁMETROS
-ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/5 - Dividir entre tipos de pacientes/RBD'
+ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/6 - Dividir entre tipos de pacientes/RBD'
 clave_principal = 'PATNO'
-excluir_variables = ['INFODT', 'EVENT_ID']
+excluir_variables = ['EVENT_ID', 'RECRUITMENT_CAT', 'DESCRP_CAT']
 tabla_principal = 'PPMI_Baseline_Data_02Jul2018_filtrado_segun_ref_sin_duplicados.csv'
 usar_tabla_principal = False
 archivo_salida = 'fusionado.csv'

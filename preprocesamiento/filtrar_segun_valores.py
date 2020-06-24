@@ -5,11 +5,11 @@ from preprocesamiento.funciones import guardar_tabla
 ''' Filtra filas de la tabla según los valores que tomen una o varias columnas '''
 
 # PARÁMETROS
-ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/5 - Dividir entre tipos de pacientes (README)/Enfermos con withdrew/' \
-               'Patient_Status.csv'
-filtros_columna_valores = [('RECRUITMENT_CAT', ['PD']),  # lista de tuplas: (nombre de columna, lista de valores)
-                           ('ENROLL_STATUS', ['Enrolled', 'Complete', 'Withdrew']),
-                           ('DESCRP_CAT', ['IDIOP'])]
+ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/6 - Dividir entre tipos de pacientes/RBD/' \
+               'Patient_Status_sin_duplicados.csv'
+# lista de tuplas (nombre de columna, lista de valores)
+filtros_columna_valores = [('ENROLL_STATUS', ['Excluded', 'Declined', 'Withdrew', 'Enrolled', 'Complete']),
+                           ('DESCRP_CAT', ['RBD'])]
 
 # leer tabla
 tabla = pd.read_csv(ruta_archivo, sep=',', float_precision='round_trip')

@@ -5,8 +5,8 @@ from preprocesamiento.funciones import buscar_csv, guardar_tabla
 ''' Filtra filas de varios archivos según los pacientes que aparezcan en una tabla de referencia'''
 
 # PARÁMETROS
-ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/5 - Dividir entre tipos de pacientes (README)/Enfermos con withdrew'
-ruta_archivo_referencia = join(ruta_carpeta, 'Patient_Status_filtrado_por_valores.csv')
+ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/6 - Dividir entre tipos de pacientes/RBD'
+ruta_archivo_referencia = join(ruta_carpeta, 'Patient_Status_sin_duplicados_filtrado_por_valores.csv')
 clave_principal = 'PATNO'
 
 # leer tabla de referencia

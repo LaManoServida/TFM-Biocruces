@@ -5,7 +5,7 @@ import pandas as pd
 ''' Calcula estadísticas referentes a los valores perdidos de un archivo '''
 
 # PARÁMETROS
-ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/7 - Juntar en un solo archivo/RBD.csv'
+ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/8 - Crear variables derivadas/HC_con_variables_derivadas.csv'
 nombre_informe = 'Informe valores perdidos.txt'
 excluir_variables = []
 

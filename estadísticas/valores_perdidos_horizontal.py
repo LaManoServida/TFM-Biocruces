@@ -4,14 +4,19 @@ import pandas as pd
 ''' Calcula estadísticas referentes a los valores perdidos de los pacientes de un archivo '''
 
 # PARÁMETROS
-ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/8 - Crear variables derivadas/HC_con_variables_derivadas.csv'
+ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/12 - Imputar por moda/HC_con_variables_derivadas_imputado.csv'
 nombre_informe = 'Informe valores perdidos (horizontal).txt'
+excluir_variables = ['age_dis_onset']
 
 # crear archivo del informe
 f = open(os.path.join(os.path.dirname(ruta_archivo), nombre_informe), mode='w', encoding='UTF-8')
 
 # leer tabla
 tabla = pd.read_csv(ruta_archivo, sep=',', float_precision='round_trip')
+
+# excluir las variables indicadas en parámetros
+if excluir_variables and isinstance(excluir_variables, list):
+    tabla.drop(excluir_variables, 1, inplace=True)
 
 # número de filas
 num_filas = len(tabla)

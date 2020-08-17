@@ -2,13 +2,20 @@ import os
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV, cross_val_predict
+from sklearn.model_selection import GridSearchCV, cross_val_predict
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import confusion_matrix, fbeta_score, make_scorer
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.inspection import permutation_importance
 from sklearn.tree import export_graphviz
 import pickle
 from matplotlib import pyplot as plt
+import numpy as np
+
+# iterar pesos para la clase HC
+# px, py = [], []
+# for p in np.arange(0, 4, 0.02):
+#     print(p)
 
 # PARÁMETROS
 ruta_archivo = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/HC + IDIOPATHIC PD.csv'
@@ -25,7 +32,6 @@ variables_numericas = ['HVLTRT1', 'HVLTRT2', 'HVLTRT3', 'HVLTRDLY', 'HVLTREC', '
 clase = 'Class'
 semilla = 0
 hacer_grid_search = True
-beta = 1.2  # parámetro para el F-beta score
 
 # leer datos
 datos = pd.read_csv(ruta_archivo, sep=',', float_precision='round_trip')
@@ -61,70 +67,67 @@ y = datos[clase]
 # entrenar baseline: árbol de clasificación y sacar predicciones
 bl_y_pred = cross_val_predict(DecisionTreeClassifier(random_state=semilla), X, y)  # 5-fold CV
 
-# TODO: podar post entrenamiento
-# TODO: no es lo mismo FP que FN
-# TODO: qué es la importancia y cuánto debería ser o
-# TODO: cómo calcula la de todos los árboles
-# TODO: la importancia de variables tiene en cuenta los hiperparámetros?
-
 if hacer_grid_search:
     # obtener el modelo random forest con mejores valores para los hiperparámetros con grid search
     valores_buscar_params = {'n_estimators': [100, 200],
                              'criterion': ['gini', 'entropy'],
                              'min_samples_split': [2, 3, 4, 5, 6, 7],
                              'min_samples_leaf': [1, 2, 3, 4, 5],
-                             'max_depth': [5, 6, 7, 8, 9, 10],  # TODO poner menos de 5 un poquito
+                             'max_depth': [7, 8, 9, 10, 11, 12],
                              'max_features': ['sqrt'],
-                             'min_impurity_decrease': [0.001]}
-    grid_search = GridSearchCV(RandomForestClassifier(random_state=semilla), valores_buscar_params,
-                               scoring=make_scorer(fbeta_score, beta=beta, pos_label='IDIOPATHIC PD'), n_jobs=4,
+                             'min_impurity_decrease': [0.001],
+                             'ccp_alpha': [0, 10, 100]
+                             }
+    grid_search = GridSearchCV(RandomForestClassifier(random_state=semilla), valores_buscar_params, n_jobs=4,
                                verbose=3)
     grid_search.fit(X, y)  # probar y entrenar todas las combinaciones con 5-fold CV
     rf = grid_search.best_estimator_
 else:
-    # entrenar random forest con los hiperparámetros especificados
-    valores_params = {'n_estimators': 200,
+    # crear random forest con los hiperparámetros especificados
+    valores_params = {'n_estimators': 100,
                       'criterion': 'gini',
                       'min_samples_split': 2,
-                      'min_samples_leaf': 2,
-                      'max_depth': 5,
+                      'min_samples_leaf': 4,
+                      'max_depth': 11,
                       'max_features': 'sqrt',
-                      'min_impurity_decrease': 0.001}
+                      'min_impurity_decrease': 0.001,
+                      'ccp_alpha': 0,
+                      'class_weight': {'HC': 1, 'IDIOPATHIC PD': 1}}
     rf = RandomForestClassifier(**valores_params, random_state=semilla)
     grid_search = None
 
-# sacar predicciones con CV y accuracy
+# entrenar y sacar predicciones y accuracy con CV
 y_pred = cross_val_predict(rf, X, y)  # 5-fold CV
-acc_rf_bueno = round(fbeta_score(y, y_pred, beta=beta), 4)
+acc_rf_bueno = round(accuracy_score(y, y_pred), 4)
 
 # volver a entrenarlo pero ahora con todos los datos
 rf.fit(X, y)
 
 # guardarlo
 pickle.dump(rf, open(f'Modelo {acc_rf_bueno}.pickle', 'wb'))
-# loaded_model = pickle.load(open('', 'rb'))
 
 # evaluar
 print('[BASELINE - ÁRBOL DE CLASIFICAICÓN]')
 print('Matriz de confusión:\n', confusion_matrix(y, bl_y_pred))
-print('Fbetaasdas-:', round(fbeta_score(y, bl_y_pred, beta=beta), 4), '\n')
+print('Accuracy:', round(accuracy_score(y, bl_y_pred), 4), '\n')
 
 print('[RANDOM FOREST]')
 if hacer_grid_search:
     print(f'Grid search - Mejores parámetros encontrados: {grid_search.best_params_}')
 print('Matriz de confusión:\n', confusion_matrix(y, y_pred))
-print('fbetasasaa:', acc_rf_bueno, '\n')
+print('Accuracy:', acc_rf_bueno, '\n')
 
 # visualizar la importancia de las variables
 variables = X.columns.values
-importancias = rf.feature_importances_
-plt.bar(variables[importancias.argsort()][:15], sorted(importancias, reverse=True)[:15])
+imp = permutation_importance(rf, X, y, n_repeats=100, n_jobs=4)
+indices = imp.importances_mean.argsort()[::-1][:15]
+plt.bar(variables[indices], imp.importances_mean[indices], yerr=imp.importances_std[indices])
 plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
 plt.show()
 
-# visualizar un árbol
+# visualizar el primer árbol
 nombre_arbol = 'tree'
-export_graphviz(rf.estimators_[0], out_file=f'{nombre_arbol}.dot',  # TODO bueno por qué este árbol xd
+export_graphviz(rf.estimators_[0], out_file=f'{nombre_arbol}.dot',
                 feature_names=X.columns,
                 class_names=['HC', 'IDIOPATHIC PD'],
                 rounded=True, proportion=False,
@@ -132,3 +135,9 @@ export_graphviz(rf.estimators_[0], out_file=f'{nombre_arbol}.dot',  # TODO bueno
 
 os.system(f'dot -Tpng {nombre_arbol}.dot -o {nombre_arbol}.png')
 os.remove(f'{nombre_arbol}.dot')
+
+# gráfico de accuracy según el peso para HC
+# px.append(p)
+# py.append(acc_rf_bueno)
+#
+# plt.plot(px, py), plt.show()

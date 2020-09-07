@@ -1,4 +1,5 @@
-import numpy as np
+# import numpy as np
+import os
 from itertools import compress
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
@@ -12,6 +13,7 @@ from sklearn.tree import export_graphviz
 import pickle
 from matplotlib import pyplot as plt
 from preprocesamiento.crear_variables_agrupadas import agrupar_variables
+from preprocesamiento.funciones import aplicar_regex_a_lista
 
 # iterar pesos para la clase HC
 # px, py = [], []
@@ -20,34 +22,35 @@ from preprocesamiento.crear_variables_agrupadas import agrupar_variables
 
 # PARÁMETROS
 ruta_datos = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/HC + IDIOPATHIC PD.csv'
-lista_negra = ['PATNO', 'age_dis_onset', 'NP3SPCH', 'NP3FACXP', 'NP3RIGN', 'NP3RIGRU', 'NP3RIGLU', 'PN3RIGRL',
-               'NP3RIGLL', 'NP3FTAPR', 'NP3FTAPL', 'NP3HMOVR', 'NP3HMOVL', 'NP3PRSPR', 'NP3PRSPL', 'NP3TTAPR',
-               'NP3TTAPL', 'NP3LGAGR', 'NP3LGAGL', 'NP3RISNG', 'NP3GAIT', 'NP3FRZGT', 'NP3PSTBL', 'NP3POSTR',
-               'NP3BRADY', 'NP3PTRMR', 'NP3PTRML', 'NP3KTRMR', 'NP3KTRML', 'NP3RTARU', 'NP3RTALU', 'NP3RTARL',
-               'NP3RTALL', 'NP3RTALJ', 'NP3RTCON', 'DYSKPRES', 'NHY', 'NUPSOURC2Q', 'NP2SPCH', 'NP2SALV', 'NP2SWAL',
-               'NP2EAT', 'NP2DRES', 'NP2HYGN', 'NP2HWRT', 'NP2HOBB', 'NP2TURN', 'NP2TRMR', 'NP2RISE', 'NP2WALK',
-               'NP2FREZ', 'NUPSOURC1', 'NP1COG', 'NP1HALL', 'NP1DPRS', 'NP1ANXS', 'NP1APAT', 'NP1DDS', 'NUPSOURC1Q',
-               'NP1SLPN', 'NP1SLPD', 'NP1PAIN', 'NP1URIN', 'NP1CNST', 'NP1LTHD', 'NP1FATG']
-variables_para_one_hot = ['ENROLL_STATUS', 'SCAU1', 'SCAU2', 'SCAU3', 'SCAU4', 'SCAU5', 'SCAU6', 'SCAU7', 'SCAU8',
-                          'SCAU9', 'SCAU10', 'SCAU11', 'SCAU12', 'SCAU13', 'SCAU14', 'SCAU15', 'SCAU16', 'SCAU17',
-                          'SCAU18', 'SCAU19', 'SCAU20', 'SCAU21', 'SCAU23A', 'SCAUSEX1', 'SCAUSEX2', 'GENDER', 'HANDED']
-clase = 'Class'
+lista_negra_regex_indiv = ['^PATNO$', '^age_dis_onset$', '^NP1', '^NP2', '^NP3', '^NUPSOURC', '^DYSKPRES$', '^NHY$']
+lista_negra_regex_agrup = ['^PATNO$', '^age_dis_onset$', '^NP1', '^NP2', '^NP3', '^NUPSOURC', '^DYSKPRES$', '^NHY$',
+                           '^GDSDROPD$', '^GDSEMPTY$', '^GDSAFRAD$', '^GDSHAPPY$', '^GDSHOME$', '^GDSMEMRY$',
+                           '^GDSALIVE$', '^GDSENRGY$', '^GDSBETER$', '^HVLTREC$', '^HVLTFPRL$', '^HVLTFPUN$',
+                           '^PTCGBOTH$', '^MCATOT$']
+variables_para_one_hot_regex = ['^ENROLL_STATUS$', '^GENDER$', '^HANDED$', '^SCAU']
+nombre_clase = 'Class'
 semilla = 0
 hacer_grid_search = False
 ruta_sustitutos = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/valores sustitutos.json'
 ruta_sumatorios = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/sumatorios intermedio supervisado.json'
 hacer_variables_agrupadas = True
 
+# elegir las variables dependiendo de si se hacen agrupamientos o no
+lista_negra_regex = lista_negra_regex_indiv if not hacer_variables_agrupadas else lista_negra_regex_agrup
+
 # leer datos
 datos = pd.read_csv(ruta_datos, sep=',', float_precision='round_trip')
+
+# aplicar regex a las listas
+lista_negra = aplicar_regex_a_lista(lista_negra_regex, datos)
+variables_para_one_hot = aplicar_regex_a_lista(variables_para_one_hot_regex, datos)
+
+# quitar variables de la lista negra
+datos.drop(lista_negra, axis=1, inplace=True)
 
 # si hay que agrupar variables
 if hacer_variables_agrupadas:
     datos = agrupar_variables(datos, ruta_sustitutos, ruta_sumatorios)
-
-# quitar variables de la lista negra
-# ignorar errores porque, debido al posible agrupamiento, puede que ya no existan variables que están en la lista negra
-datos.drop(lista_negra, axis=1, inplace=True, errors='ignore')
 
 # quitar variables que no varían
 datos.drop(datos.columns[datos.nunique().values == 1], axis=1, inplace=True)
@@ -68,8 +71,8 @@ datos.drop(cols_para_one_hot.columns, axis=1, inplace=True)
 datos = datos.join(cat_onehot)
 
 # separar atributos de clase
-X = datos.drop(clase, axis=1)
-y = datos[clase]
+X = datos.drop(nombre_clase, axis=1)
+y = datos[nombre_clase]
 
 # separar train y test
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=semilla, stratify=y.values)
@@ -130,7 +133,8 @@ print('Accuracy:', acc_rf_bueno, '\n')
 # visualizar la importancia de las variables
 variables = X.columns.values
 imp = permutation_importance(rf, X, y, n_repeats=10, n_jobs=4)
-indices = imp.importances_mean.argsort()[::-1][:15]  # TODO las que sean mayores que 0.01
+# los índices ordenados de los valores mayores que 0.01, máximo 10
+indices = [ind for ind in imp.importances_mean.argsort()[::-1] if imp.importances_mean[ind] >= 0.01][:10]
 plt.bar(variables[indices], imp.importances_mean[indices], yerr=imp.importances_std[indices], capsize=5)
 plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
 plt.show()

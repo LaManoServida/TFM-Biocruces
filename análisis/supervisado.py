@@ -1,4 +1,4 @@
-# import numpy as np
+import numpy as np
 import os
 from itertools import compress
 import pandas as pd
@@ -15,25 +15,22 @@ from matplotlib import pyplot as plt
 from preprocesamiento.crear_variables_agrupadas import agrupar_variables
 from preprocesamiento.funciones import aplicar_regex_a_lista
 
-# iterar pesos para la clase HC
-# px, py = [], []
-# for p in np.arange(0.5, 1.5, 0.01):
-#     print(p)
-
 # PARÁMETROS
 ruta_datos = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/HC + IDIOPATHIC PD.csv'
 lista_negra_regex_indiv = ['^PATNO$', '^age_dis_onset$', '^NP1', '^NP2', '^NP3', '^NUPSOURC', '^DYSKPRES$', '^NHY$']
+# lista_negra_regex_agrup = ['^PATNO$', '^age_dis_onset$', '^NP1', '^NP2', '^NP3', '^NUPSOURC', '^DYSKPRES$', '^NHY$',
+#                            '^GDSDROPD$', '^GDSEMPTY$', '^GDSAFRAD$', '^GDSHAPPY$', '^GDSHOME$', '^GDSMEMRY$',
+#                            '^GDSALIVE$', '^GDSENRGY$', '^GDSBETER$', '^HVLTREC$', '^HVLTFPRL$', '^HVLTFPUN$',
+#                            '^PTCGBOTH$', '^MCATOT$']  # para intermedios 1 y 2
 lista_negra_regex_agrup = ['^PATNO$', '^age_dis_onset$', '^NP1', '^NP2', '^NP3', '^NUPSOURC', '^DYSKPRES$', '^NHY$',
-                           '^GDSDROPD$', '^GDSEMPTY$', '^GDSAFRAD$', '^GDSHAPPY$', '^GDSHOME$', '^GDSMEMRY$',
-                           '^GDSALIVE$', '^GDSENRGY$', '^GDSBETER$', '^HVLTREC$', '^HVLTFPRL$', '^HVLTFPUN$',
-                           '^PTCGBOTH$', '^MCATOT$']
+                           '^HVLTREC$', '^HVLTFPRL$', '^HVLTFPUN$', '^PTCGBOTH$', '^MCATOT$']  # para total
 variables_para_one_hot_regex = ['^ENROLL_STATUS$', '^GENDER$', '^HANDED$', '^SCAU']
 nombre_clase = 'Class'
 semilla = 0
 hacer_grid_search = False
-ruta_sustitutos = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/valores sustitutos.json'
-ruta_sumatorios = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/sumatorios intermedio supervisado.json'
 hacer_variables_agrupadas = True
+ruta_sustitutos = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/valores sustitutos.json'
+ruta_sumatorios = 'D:/Dropbox/UNI/TFM/datos/14 - Juntar HC e IDIOPATHIC PD/sumatorios supervisado total.json'
 
 # elegir las variables dependiendo de si se hacen agrupamientos o no
 lista_negra_regex = lista_negra_regex_indiv if not hacer_variables_agrupadas else lista_negra_regex_agrup
@@ -77,83 +74,88 @@ y = datos[nombre_clase]
 # separar train y test
 # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=semilla, stratify=y.values)
 
-# entrenar baseline: árbol de clasificación y sacar predicciones
-bl_y_pred = cross_val_predict(DecisionTreeClassifier(random_state=semilla), X, y)  # 5-fold CV
+# iterar pesos para la clase HC
+px, py = [], []
+for p in np.arange(0.5, 1.5, 0.001):
+    print(p)
 
-if hacer_grid_search:
-    # obtener el modelo random forest con mejores valores para los hiperparámetros con grid search
-    valores_buscar_params = {'n_estimators': [100, 200],
-                             'criterion': ['gini', 'entropy'],
-                             'min_samples_split': [8, 9, 10, 11, 12],
-                             'min_samples_leaf': [1, 2, 3, 4, 5],
-                             'max_depth': [7, 8, 9, 10, 11, 12],
-                             'max_features': ['None', 'sqrt', 'log2'],
-                             'min_impurity_decrease': [0.001],
-                             # 'ccp_alpha': [0, 10, 100]
-                             }
-    grid_search = GridSearchCV(RandomForestClassifier(random_state=semilla), valores_buscar_params, n_jobs=4,
-                               verbose=3)
-    grid_search.fit(X, y)  # probar y entrenar todas las combinaciones con 5-fold CV
-    rf = grid_search.best_estimator_
-else:
-    # crear random forest con los hiperparámetros especificados
-    valores_params = {'n_estimators': 200,
-                      'criterion': 'entropy',
-                      'min_samples_split': 10,
-                      'min_samples_leaf': 2,
-                      'max_depth': 9,
-                      'max_features': 'sqrt',
-                      'min_impurity_decrease': 0.001,
-                      'ccp_alpha': 0,
-                      'class_weight': {'HC': 1, 'IDIOPATHIC PD': 1.0000000000000001}}
-    rf = RandomForestClassifier(**valores_params, random_state=semilla)
-    grid_search = None
+    # entrenar baseline: árbol de clasificación y sacar predicciones
+    bl_y_pred = cross_val_predict(DecisionTreeClassifier(random_state=semilla), X, y)  # 5-fold CV
 
-# entrenar y sacar predicciones y accuracy con CV
-y_pred = cross_val_predict(rf, X, y)  # 5-fold CV
-acc_rf_bueno = round(accuracy_score(y, y_pred), 4)
+    if hacer_grid_search:
+        # obtener el modelo random forest con mejores valores para los hiperparámetros con grid search
+        valores_buscar_params = {'n_estimators': [100, 200],
+                                 'criterion': ['gini', 'entropy'],
+                                 'min_samples_split': [10, 11, 12, 13, 14],
+                                 'min_samples_leaf': [1, 2, 3, 4, 5],
+                                 'max_depth': [2, 3, 4, 5, 6, 7],
+                                 'max_features': [None]  # , 'sqrt', 'log2'],
+                                 # 'min_impurity_decrease': [0.1, 0.01, 0.001],
+                                 # 'ccp_alpha': [0, 10, 100]
+                                 }
+        grid_search = GridSearchCV(RandomForestClassifier(random_state=semilla), valores_buscar_params, n_jobs=4,
+                                   verbose=3)
+        grid_search.fit(X, y)  # probar y entrenar todas las combinaciones con 5-fold CV
+        rf = grid_search.best_estimator_
+    else:
+        # crear random forest con los hiperparámetros especificados
+        valores_params = {'n_estimators': 100,
+                          'criterion': 'gini',
+                          'min_samples_split': 12,
+                          'min_samples_leaf': 4,
+                          'max_depth': 4,
+                          'max_features': None,
+                          'min_impurity_decrease': 0.001,
+                          'ccp_alpha': 0,
+                          'class_weight': {'HC': 1, 'IDIOPATHIC PD': p}}
+        rf = RandomForestClassifier(**valores_params, random_state=semilla)
+        grid_search = None
 
-# volver a entrenarlo pero ahora con todos los datos
-rf.fit(X, y)
+    # entrenar y sacar predicciones y accuracy con CV
+    y_pred = cross_val_predict(rf, X, y)  # 5-fold CV
+    acc_rf_bueno = round(accuracy_score(y, y_pred), 4)
 
-# guardarlo
-pickle.dump(rf, open(f'Modelo {acc_rf_bueno}.pickle', 'wb'))
+    # volver a entrenarlo pero ahora con todos los datos
+    rf.fit(X, y)
 
-# evaluar
-print('[BASELINE - ÁRBOL DE CLASIFICACIÓN]')
-print('Matriz de confusión:\n', confusion_matrix(y, bl_y_pred))
-print('Accuracy:', round(accuracy_score(y, bl_y_pred), 4), '\n')
+    # guardarlo
+    # pickle.dump(rf, open(f'Modelo {acc_rf_bueno}.pickle', 'wb'))
 
-print('[RANDOM FOREST]')
-if hacer_grid_search:
-    print(f'Grid search - Mejores parámetros encontrados: {grid_search.best_params_}')
-print('Matriz de confusión:\n', confusion_matrix(y, y_pred))
-print('Accuracy:', acc_rf_bueno, '\n')
+    # evaluar
+    print('[BASELINE - ÁRBOL DE CLASIFICACIÓN]')
+    print('Matriz de confusión:\n', confusion_matrix(y, bl_y_pred))
+    print('Accuracy:', round(accuracy_score(y, bl_y_pred), 4), '\n')
 
-# visualizar la importancia de las variables
-variables = X.columns.values
-imp = permutation_importance(rf, X, y, n_repeats=10, n_jobs=4)
-# los índices ordenados de los valores mayores que 0.01, máximo 10
-indices = [ind for ind in imp.importances_mean.argsort()[::-1] if imp.importances_mean[ind] >= 0.01][:10]
-plt.bar(variables[indices], imp.importances_mean[indices], yerr=imp.importances_std[indices], capsize=5)
-plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
-plt.show()
+    print('[RANDOM FOREST]')
+    if hacer_grid_search:
+        print(f'Grid search - Mejores parámetros encontrados: {grid_search.best_params_}')
+    print('Matriz de confusión:\n', confusion_matrix(y, y_pred))
+    print('Accuracy:', acc_rf_bueno, '\n')
 
-# visualizar el primer árbol
-nombre_arbol = 'tree'
-export_graphviz(rf.estimators_[0], out_file=f'{nombre_arbol}.dot',
-                feature_names=X.columns,
-                class_names=['HC', 'IDIOPATHIC PD'],
-                rounded=True, proportion=False,
-                precision=2, filled=True)
+    # # visualizar la importancia de las variables
+    # variables = X.columns.values
+    # imp = permutation_importance(rf, X, y, n_repeats=10, n_jobs=4)
+    # # los índices ordenados de los valores mayores que 0.01, máximo 10
+    # indices = [ind for ind in imp.importances_mean.argsort()[::-1] if imp.importances_mean[ind] >= 0.01][:10]
+    # plt.bar(variables[indices], imp.importances_mean[indices], yerr=imp.importances_std[indices], capsize=5)
+    # plt.xticks(rotation=35, ha='right', rotation_mode='anchor')
+    # plt.show()
+    #
+    # # visualizar el primer árbol
+    # nombre_arbol = 'tree'
+    # export_graphviz(rf.estimators_[0], out_file=f'{nombre_arbol}.dot',
+    #                 feature_names=X.columns,
+    #                 class_names=['HC', 'IDIOPATHIC PD'],
+    #                 rounded=True, proportion=False,
+    #                 precision=2, filled=True)
+    #
+    # os.system(f'dot -Tpng {nombre_arbol}.dot -o {nombre_arbol}.png')
+    # os.remove(f'{nombre_arbol}.dot')
 
-os.system(f'dot -Tpng {nombre_arbol}.dot -o {nombre_arbol}.png')
-os.remove(f'{nombre_arbol}.dot')
+    # gráfico de accuracy según el peso para HC
+    px.append(p)
+    py.append(acc_rf_bueno)
 
-#     # gráfico de accuracy según el peso para HC
-#     px.append(p)
-#     py.append(acc_rf_bueno)
-
-# plt.plot(px, py), plt.show()
-# print('p:', px[py.index(max(py))])
-# print('acc:', max(py))
+plt.plot(px, py), plt.show()
+print('p:', px[py.index(max(py))])
+print('acc:', max(py))

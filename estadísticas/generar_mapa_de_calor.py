@@ -50,3 +50,4 @@ def mapa_de_calor(matriz, ruta, titulo, etiquetas_x, etiquetas_y, sufijo='', no_
     # guardar
     fig.tight_layout()
     plt.savefig(ruta)
+    plt.show()

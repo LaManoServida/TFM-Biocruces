@@ -7,8 +7,8 @@ from preprocesamiento.funciones import buscar_csv
 ''' Calcula los tamaños de muestra de los archivos de una carpeta '''
 
 # PARÁMETROS
-ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/3 - Cambiar nombres de variables'
-ruta_grafico = 'Tamaño de muestras - diagrama de barras.png'
+ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/3 - Fecha a timestamp'
+ruta_grafico = 'Tamaño de muestras - diagrama de barras.pdf'
 clave_principal = 'PATNO'
 
 # leer tablas
@@ -19,7 +19,7 @@ nums_pacientes = [len(np.unique(tabla[clave_principal].values)) for tabla in tab
 print(nums_pacientes)
 
 # generar diagrama de barras
-etiquetas = [os.path.splitext(r)[0] for r in os.listdir(ruta_carpeta)]
+etiquetas = [os.path.splitext(os.path.basename(r))[0] for r in buscar_csv(ruta_carpeta)]
 print(etiquetas)
 plt.figure(figsize=(6, 7))
 plt.bar(etiquetas, nums_pacientes, color='forestgreen')
@@ -37,3 +37,4 @@ plt.title('Número de pacientes únicos por cada archivo')
 # guardar
 plt.tight_layout()
 plt.savefig(ruta_grafico)
+plt.show()

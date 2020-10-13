@@ -8,8 +8,8 @@ from estadísticas.generar_mapa_de_calor import mapa_de_calor
 ''' Calcula los porcentajes de intersección de pacientes entre varios archivos '''
 
 # PARÁMETROS
-ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/3 - Cambiar nombres de variables'
-ruta_grafico = 'Intersección tablas - mapa de calor.png'
+ruta_carpeta = 'D:/Dropbox/UNI/TFM/datos/3 - Fecha a timestamp'
+ruta_grafico = 'Intersección tablas - mapa de calor.pdf'
 clave_principal = 'PATNO'
 
 # leer tablas
@@ -30,7 +30,7 @@ for i in range(num_tablas):
 print(matriz)
 
 # generar mapa de calor
-etiquetas = [os.path.splitext(r)[0] for r in os.listdir(ruta_carpeta)]
+etiquetas = [os.path.splitext(os.path.basename(r))[0] for r in buscar_csv(ruta_carpeta)]
 mapa_de_calor(matriz=matriz,
               ruta=ruta_grafico,
               titulo='Porcentaje de pacientes de A contenidos en B',
